@@ -1,6 +1,12 @@
 package CSVParser;
 
-import java.io.*;
+import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +24,7 @@ public class CSVParser {
             while (true) {
                 symbol = reader.read();
                 if (symbol == -1) { // End of stream case
-                    tokens.add(sb.toString());
+                    if(sb.length() > 0) tokens.add(sb.toString());
                     break;
                 }
 
@@ -27,7 +33,7 @@ public class CSVParser {
                     sb.append(character);
                 }
                 else { // Reach end of token, add it to list and clear builder
-                    tokens.add(sb.toString());
+                    if(sb.length() > 0) tokens.add(sb.toString());
                     sb.setLength(0);
                 }
             }
