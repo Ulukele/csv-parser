@@ -1,12 +1,6 @@
 package CSVParser;
 
-import java.io.Reader;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +11,7 @@ public class CSVParser {
         Reader reader = null;
         List<String> tokens = new ArrayList<>();
         try {
-            reader = new InputStreamReader(new FileInputStream(filename));
-
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
             StringBuilder sb = new StringBuilder();
             int symbol;
             while (true) {
