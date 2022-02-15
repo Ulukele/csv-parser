@@ -11,7 +11,7 @@ public class CSVParser {
         Reader reader = null;
         List<String> tokens = new ArrayList<>();
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+            reader = new BufferedReader(new FileReader(filename));
             StringBuilder sb = new StringBuilder();
             int symbol;
             while (true) {
