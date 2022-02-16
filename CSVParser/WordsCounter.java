@@ -1,12 +1,9 @@
 package CSVParser;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
-public class CSVParser {
+public class WordsCounter {
     private static List<String> readFile(String filename) {
         Reader reader = null;
         List<String> tokens = new ArrayList<>();
@@ -47,41 +44,34 @@ public class CSVParser {
         return tokens;
     }
 
-    private static Iterable<Word> countWords(List<String> tokens) {
+    private static Set<Word> countWords(List<String> tokens) {
         TreeSet<Word> words = new TreeSet<>();
 
         for (String token: tokens) {
             Word searchable = new Word(token, 1);
 
             Word update = words.ceiling(searchable);
-            if (update != null && update.equals(searchable)) { // This word already in set
-                update.setFrequency(update.getFrequency() + 1);
+            if (update != null && update.getToken().equals(searchable.getToken())) { // This word already in set
+                update.setCount(update.getCount() + 1);
             }
             else { // This word not in set yet
                 words.add(searchable);
             }
         }
+        return words;
+    }
 
-        Set<Word> sorted = new TreeSet<>(new WordsFrequencyComparator());
+    private static Iterable<Word> sortWordsByCount(Collection<Word> words) {
+        Set<Word> sorted = new TreeSet<>(new WordsCountComparator());
         sorted.addAll(words);
         return sorted;
     }
 
-    private static void writeFile(String filename, Iterable<Word> words, int wordsCount) {
+    private static void writeFile(String filename, StringBuilder str) {
         Writer writer = null;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(filename));
-
-            StringBuilder sb = new StringBuilder();
-            for (Word w: words) {
-                sb.append(w.getToken());
-                sb.append(",");
-                sb.append(w.getFrequency());
-                sb.append(",");
-                sb.append((float) w.getFrequency() / wordsCount * 100);
-                sb.append("\n");
-            }
-            writer.write(sb.toString());
+            writer.write(str.toString());
         }
         catch (IOException e) {
             System.err.println("Error while writing file " + filename + ": " + e.getLocalizedMessage());
@@ -98,10 +88,24 @@ public class CSVParser {
         }
     }
 
+    private static StringBuilder formatToCSV(Iterable<Word> words, int wordsCount) {
+        StringBuilder sb = new StringBuilder();
+        for (Word w: words) {
+            sb.append(w.getToken());
+            sb.append(",");
+            sb.append(w.getCount());
+            sb.append(",");
+            sb.append((float) w.getCount() / wordsCount * 100);
+            sb.append("\n");
+        }
+        return sb;
+    }
+
     public static void parseFile(String inFilename, String outFilename) {
         List<String> tokens = readFile(inFilename);
         int tokensCount = tokens.size();
-        Iterable<Word> words = countWords(tokens);
-        writeFile(outFilename, words, tokensCount);
+        Set<Word> words = countWords(tokens);
+        Iterable<Word> sortedWords = sortWordsByCount(words);
+        writeFile(outFilename, formatToCSV(sortedWords, tokensCount));
     }
 }
