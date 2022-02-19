@@ -1,4 +1,4 @@
-package CSVParser;
+package Statistic;
 
 import java.util.Comparator;
 
