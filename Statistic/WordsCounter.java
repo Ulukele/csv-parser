@@ -5,7 +5,7 @@ import java.util.*;
 public class WordsCounter {
 
     private static Set<Word> countWords(Iterable<String> tokens) {
-        TreeSet<Word> words = new TreeSet<>();
+        TreeSet<Word> words = new TreeSet<>(new WordsTokenComparator());
 
         for (String token: tokens) {
             Word searchable = new Word(token, 1);
